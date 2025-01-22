@@ -10,6 +10,6 @@ export default async (req, context) => {
   // const url = `https://api-web.nhle.com/v1/player/8476945/game-log/20242025/2`;
   // const resp = await fetch(url);
 
-  return new Response(stats);
+  return new Response(JSON.parse(stats));
   // return new Response(JSON.stringify(stats));
 };
