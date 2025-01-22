@@ -10,6 +10,5 @@ export default async (req, context) => {
   const store = getStore("stats");
   await store.setJSON("hellebuyck", await resp.json());
 
-  return new Response(JSON.stringify(stats));
-  // return new Response(JSON.stringify(stats));
+  return new Response(JSON.stringify(resp.json()));
 };
