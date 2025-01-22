@@ -8,7 +8,7 @@ export default async (req, context) => {
   const resp = await fetch(url);
 
   const store = getStore("stats");
-  await store.setJSON("hellebuyck", resp);
+  await store.setJSON("hellebuyck", await resp.json());
 
   return new Response(JSON.stringify(stats));
   // return new Response(JSON.stringify(stats));
