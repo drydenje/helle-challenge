@@ -2,4 +2,4 @@
   directory = "netlify/functions"
 
 [functions."fetchHellebuyck"]
-  schedule = "0 3 * * *"
+  schedule = "0 8 * * *"
