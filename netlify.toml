@@ -1,2 +1,5 @@
 [functions]
   directory = "netlify/functions"
+
+[functions."fetchHellebuyck"]
+  schedule = "0 3 * * *"
