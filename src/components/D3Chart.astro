@@ -66,8 +66,8 @@
   (async () => {
     try {
       const urls = [
-        'http://localhost:8888/.netlify/functions/hellebuyck',
-        'http://localhost:8888/.netlify/functions/price'
+        '/.netlify/functions/hellebuyck',
+        '/.netlify/functions/price'
       ]
       const requests = urls.map((url) => fetch(url));
       const responses = await Promise.all(requests);
@@ -119,17 +119,6 @@
       const price = await cleanGameLogs(data[1]);
       addLine(svg, helle, x, y, 'steelblue');
       addLine(svg, price, x, y, 'red');
-
-      // const line = d3.line()
-      //   .x(d => x(d.gameNumber))
-      //   .y(d => y(d.savePctg));
-
-      // svg.append("path")
-      //   .datum(helle)
-      //   .attr('fill', 'none')
-      //   .attr('stroke', 'steelblue')
-      //   .attr('stoke-width', 1)
-      //   .attr('d', line);
 
       // Append the SVG element.
       container.append(svg.node());
