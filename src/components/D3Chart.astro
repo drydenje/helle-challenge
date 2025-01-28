@@ -1,6 +1,8 @@
 ---
 ---
-<div id="container"></div>
+<div class="wrapper">
+  <div id="container"></div>
+</div>
 
 <script type="module">
 
@@ -98,7 +100,7 @@
 
       // Declare the y (vertical position) scale.
       const y = d3.scaleLinear()
-          .domain([0.700, 1.000])
+          .domain([0.750, 1.000])
           .range([height - marginBottom, marginTop]);
 
       // Create the SVG container.
@@ -113,8 +115,12 @@
 
       // Add the y-axis.
       svg.append("g")
-          .attr("transform", `translate(${marginLeft},0)`)
-          .call(d3.axisLeft(y));
+        .attr("transform", `translate(${marginLeft},0)`)
+        .call(d3.axisLeft(y)
+        .tickValues([0.750, 0.800, 0.850, 0.900, 0.950, 1])
+        .tickFormat(d => {
+          return `${d.toFixed(3)}`;
+        }))
 
       const helle = await cleanGameLogs(data[0]);
       const price = await cleanGameLogs(data[1]);
@@ -133,6 +139,12 @@
 </script>
 
 <style>
+  .wrapper {
+    height: 100vh;
+    display: grid;
+    place-content: center;
+  }
+
 	#background {
 		position: fixed;
 		top: 0;
@@ -271,11 +283,6 @@
 		#container {
 			display: flex;
 			flex-direction: column;
-		}
-
-		#hero {
-			display: block;
-			padding-top: 10%;
 		}
 
 		#links {
