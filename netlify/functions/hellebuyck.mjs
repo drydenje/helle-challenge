@@ -5,6 +5,27 @@ export default async (req, context) => {
   const helle = await store.get("hellebuyck");
   // needed to use a temp var, might be able to parse without?
   const temp = JSON.parse(helle);
+
+  const totalShotsAgainst = temp.gameLog.reduce((acc, curr, index) => {
+    acc.push(curr.shotsAgainst + (acc[index - 1] || 0));
+    return acc;
+  }, []);
+
+  const totalGoalsAgainst = temp.gameLog.reduce((acc, curr, index) => {
+    acc.push(curr.goalsAgainst + (acc[index - 1] || 0));
+    return acc;
+  }, []);
+
+  const logs = temp.gameLog.map((game, index) => {
+    const sp = (totalGoalsAgainst[index] / totalShotsAgainst[index] - 1) * -1;
+    return {
+      ...game,
+      totalShotsAgainst: totalShotsAgainst[index],
+      totalGoalsAgainst: totalGoalsAgainst[index],
+      totalSavePercentage: parseFloat(sp).toFixed(3),
+    };
+  });
+
   const res = Object.assign(
     // create a new blank object
     {},
@@ -13,9 +34,10 @@ export default async (req, context) => {
     {
       playerName: "Connor Hellebuyck",
       playerNumber: 8476945,
+      ...temp,
+      gameLog: logs,
     },
     // then add the blob data pulled from netlify
-    temp,
     // then remove the fields you don't want
     {
       gameTypeId: undefined,

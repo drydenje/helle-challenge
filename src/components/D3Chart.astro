@@ -36,7 +36,6 @@
 
   const cleanGameLogs = (player) => {
     return player.gameLog
-      .reverse()
       .map(game => {
         return {
           date: game.gameDate,
@@ -48,6 +47,9 @@
           shotsAgainst: game.shotsAgainst,
           goalsAgainst: game.goalsAgainst,
           savePctg: game.savePctg,
+          totalShotsAgainst: game.totalShotsAgainst,
+          totalGoalsAgainst: game.totalGoalsAgainst,
+          totalSavePercentage: game.totalSavePercentage
         }
       })
   }
@@ -55,7 +57,8 @@
   const addLine = (svg, player, x, y, colour) => {
       const line = d3.line()
         .x(d => x(d.gameNumber))
-        .y(d => y(d.savePctg));
+        .y(d => y(d.totalSavePercentage)
+        );
 
       svg.append("path")
         .datum(player)
@@ -83,52 +86,59 @@
       const json = responses.map((response) => response.json());
       const data = await Promise.all(json);
 
-      data.forEach((datum) => console.log(datum));
+      data.forEach((datum) => console.log("Datum:", datum));
 
       // Declare the chart dimensions and margins.
-      const width = 640;
-      const height = 400;
-      const marginTop = 20;
-      const marginRight = 20;
-      const marginBottom = 30;
-      const marginLeft = 40;
+      const margin = { top: 70, right: 30, bottom: 40, left: 80 };
+      const width = 1200 - margin.left - margin.right;
+      const height = 500 - margin.top - margin.bottom;
 
       // Declare the x (horizontal position) scale.
       const x = d3.scaleLinear()
-          .domain([0, 70])
-          .range([marginLeft, width - marginRight]);
+        .range([0, width])
+        .domain([1, 70])
 
       // Declare the y (vertical position) scale.
       const y = d3.scaleLinear()
-          .domain([0.750, 1.000])
-          .range([height - marginBottom, marginTop]);
+        .range([height, 0])
+        .domain([0.850, 1.000])
 
       // Create the SVG container.
-      const svg = d3.create("svg")
-          .attr("width", width)
-          .attr("height", height);
+      const svg = d3.select("#container")
+        .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+          .attr("transform", `translate(${margin.left}, ${margin.top})`)
 
       // Add the x-axis.
       svg.append("g")
-          .attr("transform", `translate(0,${height - marginBottom})`)
-          .call(d3.axisBottom(x));
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x))
 
       // Add the y-axis.
       svg.append("g")
-        .attr("transform", `translate(${marginLeft},0)`)
         .call(d3.axisLeft(y)
-        .tickValues([0.750, 0.800, 0.850, 0.900, 0.950, 1])
+        .tickValues([0.850, 0.900, 0.950, 1])
         .tickFormat(d => {
           return `${d.toFixed(3)}`;
-        }))
+        }));
+
+        // first attempt at solid constant line, not working
+      // svg.append('line')
+      //   .attr("x1", 0)
+      //   .attr("y1", 0.904)
+      //   .attr("x2", 700)
+      //   .attr("y2", 0.904)
+      //   .attr('fill', 'none')
+      //   .attr('stroke', 'lime')
+      //   .attr('stoke-width', 1)
+        // .attr('d', line);
 
       const helle = await cleanGameLogs(data[0]);
       const price = await cleanGameLogs(data[1]);
       addLine(svg, helle, x, y, 'steelblue');
       addLine(svg, price, x, y, 'red');
-
-      // Append the SVG element.
-      container.append(svg.node());
     }
     catch (error) {
       console.error(error);
@@ -158,6 +168,7 @@
 	#container {
 		font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
 		height: 100%;
+    border: 1px solid steelblue;
 	}
 
 	main {

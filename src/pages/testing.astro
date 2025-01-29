@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<!-- Thoughts:
+  - use grid for a better mobile look
+  - these times are really geared for retired members
+-->
+
+<Layout>
+	<section class="parent">
+    <div class="heading">Date/Time</div>
+    <div class="heading">Event</div>
+    <div class="date">Sundays 10:30 a.m.</div>
+    <div class="event">Worship Service</div>
+    <div class="date">Wednesdays 9:30 a.m.</div>
+    <div class="event">Men's Bible Study</div>
+    <div class="date">Mon Feb 10, 1:00 p.m.</div>
+    <div class="event">Jean Gordon Auxiliary</div>
+    <div class="date">Wed Feb 26, 3:00 p.m.</div>
+    <div class="event">Session Meeting</div>
+    <div class="date">Sunday Mar 9, 10:30 a.m.</div>
+    <div class="event">Worship / Annual Meeting</div>
+    <div class="details">Soup & Buns after Worship followed by dive Annual Meeting</div>
+    <div class="date">Monday Mar 10, 1:00 p.m.</div>
+    <div class="event">Jean Gordon Auxiliary Meeting</div>
+    <div class="date">Sunday May 25, 10:30 a.m.</div>
+    <div class="event">Anniversary Service</div>
+    <div class="details">Celebrating our 203rd Anniversary</div>
+  </section>
+</Layout>
+
+<style>
+  * {
+    border: 1px solid blue;
+  }
+  
+  .parent {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    gap: 10px;
+  }
+
+  .details {
+    grid-column-start: span 2;
+  }
+</style>

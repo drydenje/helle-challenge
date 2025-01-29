@@ -1605,7 +1605,6 @@ export default async (req, context) => {
       totalShotsAgainst[totalShotsAgainst.length - 1] -
       1) *
     -1;
-  // console.log(n[0]);
 
   // Everything's ok, return the data
   return new Response(
