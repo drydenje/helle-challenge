@@ -1,12 +1,70 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const stats = {
+    "date": "2025-01-24",
+    "gameNumber": 1,
+    "opponent": "Utah Hockey Club",
+    "homeRoadFlag": "H",
+    "goals": 0,
+    "assists": 0,
+    "shotsAgainst": 19,
+    "goalsAgainst": 2,
+    "savePctg": 0.894737,
+    "totalShotsAgainst": 19,
+    "totalGoalsAgainst": 2,
+    "totalSavePercentage": "0.895"
+
+    // --montreal-red: #af1e2d;
+    // --montreal-white: #ffffff;
+    // --montreal-blue: #192168;
+
+    // --winnipeg-blue: #041e41;
+    // --winnipeg-silver: #8e9090;
+    // --winnipeg-red: #ac162c;
+    // --winnipeg-white: #ffffff;
+    // --winnipeg-darkred: #7b303e;
+    // --winnipeg-darksilver: #55565a;
+}
 ---
 
 <!-- Thoughts:
   - use grid for a better mobile look
--->
-
+  -->
+  
+  
 <Layout>
+  <div class="wrapper">
+    <div class="tooltip">
+      <div>Game#: {stats.gameNumber}</div>
+      <div>SV%: {stats.totalSavePercentage}</div>
+      <div class="opponent">VS: {stats.opponent}</div>
+      <div class="date">Date: {stats.date}</div>
+      <div class="shotsAgainst">Shots Against: {stats.shotsAgainst}</div>
+      <div class="goalsAgainst">Goals Against: {stats.goalsAgainst}</div>
+      
+    </div>
+
+  </div>
+</Layout>
+
+<style>
+  .tooltip {
+    width:300px;
+    padding: 30px;
+    background-color: var(--winnipeg-blue);
+    color: white;
+    border: 1px solid white;
+    border-radius: 10px;
+    opacity: 1;
+  }
+
+  .winnipeg {
+    background-color: var(--winnipeg-blue);
+  }
+</style>
+
+<!-- <Layout>
 	<section class="upcoming-parent">
     <div class="upcoming-heading">Date/Time</div>
     <div class="upcoming-heading">Event</div>
@@ -27,7 +85,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="upcoming-event">Anniversary Service</div>
     <div class="upcoming-details">Celebrating our 203rd Anniversary</div>
   </section>
-</Layout>
+</Layout> -->
 
 <style>
   /* Upcoming Events Start */
