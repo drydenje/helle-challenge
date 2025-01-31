@@ -31,7 +31,7 @@ rect {
   z-index: 1;
 }
 
-/* .tooltip {
+.tooltip {
   position: absolute;
   padding: 10px;
   background-color: steelblue;
@@ -40,7 +40,7 @@ rect {
   border-radius: 10px;
   display: none;
   opacity: 1;
-} */
+}
 
 :root {
   /* https://www.brandcolorcode.com/montreal-canadiens */
