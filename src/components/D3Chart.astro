@@ -258,38 +258,52 @@
 
       listeningRect.on("mousemove", function (event) {
         const [xCoord] = d3.pointer(event, this);
+        // const bisectGameNumber = (typeof d3.bisector(d => d.gameNumber).left !== "undefined") ? d3.bisector(d => d.gameNumber).left : false;
         const bisectGameNumber = d3.bisector(d => d.gameNumber).left;
         const x0 = x.invert(xCoord);
         const i = bisectGameNumber(price, x0, 1);
-        const i2 = bisectGameNumber(helle, x0, 1);
+
         const d0 = price[i - 1];
         const d1 = price[i];
         const d = x0 - d0.gameNumber > d1.gameNumber - x0 ? d1 : d0;
-        const e0 = helle[i2 - 1];
-        const e1 = helle[i2];
-        const e = x0 - e0.gameNumber > e1.gameNumber - x0 ? e1 : e0;
         const xPos = x(d.gameNumber);
         const yPos = y(d.totalSavePercentage);
-        const xPos2 = x(e.gameNumber);
-        const yPos2 = y(e.totalSavePercentage);
         
         // update the circle position
         circle.attr("cx", xPos)
         .attr("cy", yPos)
 
-        circle2.attr("cx", xPos2)
-        .attr("cy", yPos2)
-
         // add transition for circle radius
-        circle.transition()
+          circle.transition()
+            .duration(50)
+            .attr("r", 5);
+            
+            let xPos2, yPos2, e;
+            // console.log("x0:", x0)
+            // const i2 = bisectGameNumber(helle, x0, 1);
+            // if(i2 === false) {
+          // console.log("bi FALSE:", i2)
+          // }
+        if(typeof helle[i] !== "undefined") {
+          const e0 = helle[i - 1];
+          const e1 = helle[i];
+          e = x0 - e0.gameNumber > e1.gameNumber - x0 ? e1 : e0;
+          xPos2 = x(e.gameNumber);
+          yPos2 = y(e.totalSavePercentage);
+          
+          circle2.attr("cx", xPos2)
+          .attr("cy", yPos2)
+          
+          circle2.transition()
+            .duration(50)
+            .attr("r", 5);
+        } else {
+          circle2.transition()
           .duration(50)
-          .attr("r", 5);
-
-        circle2.transition()
-          .duration(50)
-          .attr("r", 5);
+          .attr("r", 0);
+        }
         
-          // add tooltip
+        // add tooltip
         tooltip
           .style("display", "block")
           .style("left", `${xPos + 100}px`)
@@ -297,8 +311,8 @@
           .style("top", `${250}px`)
           .html(`
             <strong>Game:</strong> ${d.gameNumber}
-            <strong>Game:</strong> ${e.gameNumber}
             `)
+            // <strong>Game:</strong> ${e.gameNumber}
           })
 
       listeningRect.on("mouseleave", function() {
