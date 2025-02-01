@@ -234,40 +234,58 @@
       //   .attr('stoke-width', 1)
         // .attr('d', line);
 
-      addLine(svg, helle, x, y, 'steelblue');
-      addLine(svg, price, x, y, 'red');
+      addLine(svg, helle, x, y, 'var(--winnipeg-blue)');
+      addLine(svg, price, x, y, 'var(--montreal-red)');
 
       // add a circle element on the rendered line
       const circle = svg.append("circle")
         .attr("r", 0)
-        .attr("fill", "steelblue")
+        .attr("fill", "var(--montreal-red)")
         .style("stroke", "white")
-        .attr("opacity", .70)
+        .attr("opacity", 1)
+        .style("pointer-events", "none");
+
+      const circle2 = svg.append("circle")
+        .attr("r", 0)
+        .attr("fill", "var(--winnipeg-blue)")
+        .style("stroke", "white")
+        .attr("opacity", 1)
         .style("pointer-events", "none");
 
       const listeningRect = svg.append("rect")
         .attr("width", width)
         .attr("height", height)
-        // added to hide the black rectangle
-        // .attr("opacity", 0)
 
       listeningRect.on("mousemove", function (event) {
         const [xCoord] = d3.pointer(event, this);
         const bisectGameNumber = d3.bisector(d => d.gameNumber).left;
         const x0 = x.invert(xCoord);
         const i = bisectGameNumber(price, x0, 1);
+        const i2 = bisectGameNumber(helle, x0, 1);
         const d0 = price[i - 1];
         const d1 = price[i];
         const d = x0 - d0.gameNumber > d1.gameNumber - x0 ? d1 : d0;
+        const e0 = helle[i2 - 1];
+        const e1 = helle[i2];
+        const e = x0 - e0.gameNumber > e1.gameNumber - x0 ? e1 : e0;
         const xPos = x(d.gameNumber);
         const yPos = y(d.totalSavePercentage);
+        const xPos2 = x(e.gameNumber);
+        const yPos2 = y(e.totalSavePercentage);
         
         // update the circle position
         circle.attr("cx", xPos)
         .attr("cy", yPos)
 
+        circle2.attr("cx", xPos2)
+        .attr("cy", yPos2)
+
         // add transition for circle radius
         circle.transition()
+          .duration(50)
+          .attr("r", 5);
+
+        circle2.transition()
           .duration(50)
           .attr("r", 5);
         
@@ -275,12 +293,20 @@
         tooltip
           .style("display", "block")
           .style("left", `${xPos + 100}px`)
-          .style("top", `${yPos + 50}px`)
-          .html(`<strong>Game:</strong> ${d.gameNumber}`)
-      })
+          // .style("top", `${yPos + 50}px`)
+          .style("top", `${250}px`)
+          .html(`
+            <strong>Game:</strong> ${d.gameNumber}
+            <strong>Game:</strong> ${e.gameNumber}
+            `)
+          })
 
       listeningRect.on("mouseleave", function() {
         circle.transition()
+          .duration(50)
+          .attr("r", 0);
+        
+        circle2.transition()
           .duration(50)
           .attr("r", 0);
 
