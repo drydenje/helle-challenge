@@ -13,7 +13,7 @@ export default async (req, context) => {
     return acc;
   }, []);
 
-  const logs = temp.gameLog.map((game, index) => {
+  const logs = temp.gameLog.reverse().map((game, index) => {
     const sp = (totalGoalsAgainst[index] / totalShotsAgainst[index] - 1) * -1;
     return {
       ...game,
