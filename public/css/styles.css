@@ -6,9 +6,10 @@ body {
 }
 
 .wrapper {
-  height: 100vh;
-  display: grid;
-  place-content: center;
+  margin: 0 auto;
+  /* height: 100vh; */
+  /* display: grid; */
+  /* place-content: center; */
 }
 
 main {
@@ -21,6 +22,8 @@ main {
   font-family: Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans",
     Arial, sans-serif;
   height: 100%;
+  display: flex;
+  justify-content: center;
   /* border: 1px solid steelblue; */
 }
 

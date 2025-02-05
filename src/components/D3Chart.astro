@@ -9,54 +9,29 @@
 
   import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-  /*
-  {
-        gameId: 2014021221,
-        teamAbbrev: "MTL",
-        homeRoadFlag: "R",
-        gameDate: "2015-04-11",
-        goals: 0,
-        assists: 0,
-        commonName: {
-          default: "Canadiens",
-        },
-        opponentCommonName: {
-          default: "Maple Leafs",
-        },
-        gamesStarted: 1,
-        decision: "W",
-        shotsAgainst: 22,
-        goalsAgainst: 3,
-        savePctg: 0.863636,
-        shutouts: 0,
-        opponentAbbrev: "TOR",
-        pim: 0,
-        toi: "64:50",
-      },
-  */
-
-  const cleanGameLogs = (player) => {
-    return player.gameLog
-      // .reverse()
-      .map(game => {
-        return {
-          date: game.gameDate,
-          gameNumber: player.gameLog.findIndex(a => a.gameId === game.gameId) + 1,
-          opponent: game.opponentCommonName.default,
-          homeRoadFlag: game.homeRoadFlag,
-          goals: game.goals,
-          assists: game.assists,
-          shotsAgainst: game.shotsAgainst,
-          goalsAgainst: game.goalsAgainst,
-          savePctg: game.savePctg,
-          totalShotsAgainst: game.totalShotsAgainst,
-          totalGoalsAgainst: game.totalGoalsAgainst,
-          totalSavePercentage: game.totalSavePercentage
-        }
-      })
-  }
+  // const cleanGameLogs = (player) => {
+  //   return player.gameLog
+  //     // .reverse()
+  //     .map(game => {
+  //       return {
+  //         date: game.gameDate,
+  //         gameNumber: player.gameLog.findIndex(a => a.gameId === game.gameId) + 1,
+  //         opponent: game.opponentCommonName.default,
+  //         homeRoadFlag: game.homeRoadFlag,
+  //         goals: game.goals,
+  //         assists: game.assists,
+  //         shotsAgainst: game.shotsAgainst,
+  //         goalsAgainst: game.goalsAgainst,
+  //         savePctg: game.savePctg,
+  //         totalShotsAgainst: game.totalShotsAgainst,
+  //         totalGoalsAgainst: game.totalGoalsAgainst,
+  //         totalSavePercentage: game.totalSavePercentage
+  //       }
+  //     })
+  // }
 
   // Line generator
+  
   const addLine = (svg, player, x, y, colour) => {
       const line = d3.line()
         .x(d => x(d.gameNumber))
@@ -75,8 +50,8 @@
     try {
     
       const urls = [
-        '/.netlify/functions/hellebuyck',
-        '/.netlify/functions/price'
+        '/functions/player/hellebuyck',
+        '/functions/price'
       ]
       const requests = urls.map((url) => fetch(url));
       const responses = await Promise.all(requests);
@@ -92,17 +67,17 @@
       // data.forEach((datum) => console.log("Datum:", datum));
 
       
-      const helle = await cleanGameLogs(data[0]);
-      const price = await cleanGameLogs(data[1]);
-      console.log("HELLE:", helle)
-      console.log("PRICE:", price)
+      const helle = await data[0];
+      const price = await data[1];
+      console.log("HELLE:", helle.gameLogs)
+      console.log("PRICE:", price.gameLogs)
 
       // Declare the chart dimensions and margins.
       const margin = { top: 70, right: 30, bottom: 40, left: 80 };
       const width = 1200 - margin.left - margin.right;
       const height = 500 - margin.top - margin.bottom;
       
-      const extent = d3.extent(price, d => d.gameNumber)
+      const extent = d3.extent(price.gameLogs, d => d.gameNumber)
 
       // Declare the x (horizontal position) scale.
       const x = d3.scaleLinear()
@@ -242,8 +217,8 @@
         .attr("stroke", "var(--winnipeg-blue)")
         .attr("stroke-width", 1);
 
-      addLine(svg, helle, x, y, 'var(--winnipeg-blue)');
-      addLine(svg, price, x, y, 'var(--montreal-red)');
+      addLine(svg, helle.gameLogs, x, y, 'var(--winnipeg-blue)');
+      addLine(svg, price.gameLogs, x, y, 'var(--montreal-red)');
 
       // add a circle element on the rendered line
       const circle = svg.append("circle")
@@ -297,15 +272,14 @@
           .style("font-size", "15px")
           .attr("alignment-baseline", "middle");
 
-
       listeningRect.on("mousemove", function (event) {
         const [xCoord] = d3.pointer(event, this);
         const bisectGameNumber = d3.bisector(d => d.gameNumber).left;
         const x0 = x.invert(xCoord);
-        const i = bisectGameNumber(price, x0, 1);
+        const i = bisectGameNumber(price.gameLogs, x0, 1);
 
-        const d0 = price[i - 1];
-        const d1 = price[i];
+        const d0 = price.gameLogs[i - 1];
+        const d1 = price.gameLogs[i];
         const d = x0 - d0.gameNumber > d1.gameNumber - x0 ? d1 : d0;
         const xPos = x(d.gameNumber);
         const yPos = y(d.totalSavePercentage);
@@ -321,9 +295,9 @@
             
         let xPos2, yPos2, e;
 
-        if(typeof helle[i] !== "undefined") {
-          const e0 = helle[i - 1];
-          const e1 = helle[i];
+        if(typeof helle.gameLogs[i] !== "undefined") {
+          const e0 = helle.gameLogs[i - 1];
+          const e1 = helle.gameLogs[i];
           e = x0 - e0.gameNumber > e1.gameNumber - x0 ? e1 : e0;
           xPos2 = x(e.gameNumber);
           yPos2 = y(e.totalSavePercentage);
@@ -341,30 +315,53 @@
         }
 
         const tootipHTML = (d,e) => {
-          // return `<div>Game:${e.gameNumber}</div> `;
-          // console.log(d,e)
-          
-          // <div>Game #: ${d.gameNumber}</div>
-          // <div>SV%: ${d.totalSavePercentage}</div>
-          // <div class="opponent">VS: ${d.opponent}</div>
-          // <div class="date">Date: ${d.date}</div>
-          // <div class="shotsAgainst">Shots Against: ${d.shotsAgainst}</div>
-          // <div class="goalsAgainst">Goals Against: ${d.goalsAgainst}</div>
-          // </div>
+          const price = 
+          `
+            <div>
+              <strong>Price</strong>
+              <div>SV%: ${d.totalSavePercentage}</div>
+              <div class="opponent">VS: ${d.opponent}</div>
+              <div class="date">Date: ${d.date}</div>
+              <div class="shotsAgainst">Shots Against: ${d.shotsAgainst}</div>
+              <div class="goalsAgainst">Goals Against: ${d.goalsAgainst}</div>
+            </div>
+          `;
+
+          const helle = 
+          `
+            <div>
+              <strong>Helle</strong>
+              <div>SV%: ${e.totalSavePercentage}</div>
+              <div class="opponent">VS: ${e.opponent}</div>
+              <div class="date">Date: ${e.date}</div>
+              <div class="shotsAgainst">Shots Against: ${e.shotsAgainst}</div>
+              <div class="goalsAgainst">Goals Against: ${e.goalsAgainst}</div>
+            </div>
+          `
           
           return `
-          <div class="montreal left-team">
-            <div class="tooltip-container">
-              <div class="winnipeg  right-team">
-                <div>Game #: ${e.gameNumber}</div>
-                <div>SV%: ${e.totalSavePercentage}</div>
-                <div class="opponent">VS: ${e.opponent}</div>
-                <div class="date">Date: ${e.date}</div>
-                <div class="shotsAgainst">Shots Against: ${e.shotsAgainst}</div>
-                <div class="goalsAgainst">Goals Against: ${e.goalsAgainst}</div>
-              </div>
+            <div>
+              <h3>Game Number: ${d.gameNumber}</h3>
+              ${price} ${helle}
             </div>
-            `
+          `
+          // console.log(d,e)
+          
+          // </div>
+          
+          // return `
+          // <div class="montreal left-team">
+          //   <div class="tooltip-container">
+          //     <div class="winnipeg  right-team">
+                // <div>Game #: ${e.gameNumber}</div>
+                // <div>SV%: ${e.totalSavePercentage}</div>
+                // <div class="opponent">VS: ${e.opponent}</div>
+                // <div class="date">Date: ${e.date}</div>
+                // <div class="shotsAgainst">Shots Against: ${e.shotsAgainst}</div>
+                // <div class="goalsAgainst">Goals Against: ${e.goalsAgainst}</div>
+          //     </div>
+          //   </div>
+          //   `
         }
 
         // add tooltip
