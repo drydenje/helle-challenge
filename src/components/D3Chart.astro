@@ -327,25 +327,30 @@
             </div>
           `;
 
-          const helle = 
-          `
-            <div>
-              <strong>Helle</strong>
-              <div>SV%: ${e.totalSavePercentage}</div>
-              <div class="opponent">VS: ${e.opponent}</div>
-              <div class="date">Date: ${e.date}</div>
-              <div class="shotsAgainst">Shots Against: ${e.shotsAgainst}</div>
-              <div class="goalsAgainst">Goals Against: ${e.goalsAgainst}</div>
-            </div>
-          `
+          let helle;
           
+          if(e?.gameNumber === d?.gameNumber) {
+          helle = 
+            `
+              <div>
+                <strong>Helle</strong>
+                <div>SV%: ${e.totalSavePercentage}</div>
+                <div class="opponent">VS: ${e.opponent}</div>
+                <div class="date">Date: ${e.date}</div>
+                <div class="shotsAgainst">Shots Against: ${e.shotsAgainst}</div>
+                <div class="goalsAgainst">Goals Against: ${e.goalsAgainst}</div>
+              </div>
+            `
+          } else {
+            helle = 'Not Played Yet'
+          }
+
           return `
             <div>
               <h3>Game Number: ${d.gameNumber}</h3>
-              ${price} ${helle}
-            </div>
-          `
-          // console.log(d,e)
+              ${price} ${e?.gameNumber !== undefined ? helle : "Not yet played"}
+              </div>
+            `;
           
           // </div>
           
