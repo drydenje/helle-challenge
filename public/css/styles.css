@@ -37,7 +37,7 @@ rect {
 .tooltip {
   position: absolute;
   padding: 10px;
-  background-color: steelblue;
+  background-color: var(--winnipeg-blue);
   color: white;
   border: 1px solid white;
   border-radius: 10px;
@@ -56,6 +56,17 @@ rect {
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-content: space-around;
+}
+
+.tt_container {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+}
+
+h3 {
+  align-self: center;
+  margin: 0 1rem;
 }
 
 /* .winnipeg {
